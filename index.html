@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTS Logika Matematika - Kalkulator Zakat</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        header {
+            padding: 20px 30px;
+            border-bottom: 2px solid #0056b3;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+            color: white;
+        }
+        .info-dosen {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 20px;
+        }
+        .info-dosen p {
+            margin: 0;
+            font-size: 0.95em;
+        }
+        .info-dosen p strong {
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        main {
+            padding: 30px;
+        }
+        h2 {
+            color: #0056b3;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: #fafafa;
+        }
+        .form-group.nested {
+            margin-left: 20px;
+            margin-top: 10px;
+            background-color: #ffffff;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group .check-label {
+            display: inline-block;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+        input[type="number"], input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        input:disabled {
+            background-color: #eee;
+            cursor: not-allowed;
+        }
+        .input-group {
+            display: flex;
+        }
+        .input-group-prepend {
+            padding: 10px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-right: none;
+            border-radius: 4px 0 0 4px;
+        }
+        .input-group input {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.secondary {
+            background-color: #6c757d;
+        }
+        button.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        #hasil-kalkulasi, #hasil-distribusi {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        #hasil-kalkulasi {
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            color: #0056b3;
+        }
+        .logika-zakat {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #fffbe6;
+            border: 1px solid #ffe58f;
+            border-radius: 6px;
+        }
+        .logika-zakat p {
+            margin: 5px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        .mustahik-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .mustahik-list li {
+            padding: 10px;
+            border: 1px solid #eee;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            background-color: #fdfdfd;
+        }
+        .mustahik-list .dalil {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+        .mustahik-list .distribusi-hasil {
+            font-weight: bold;
+            color: #28a745;
+            margin-left: 10px;
+        }
+
+        #validation-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        #validation-message.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        #validation-message.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>UTS Logika Matematika</h1>
+            <div class="info-dosen">
+                <p><strong>NIM:</strong> 256612002</p>
+                <p><strong>Nama:</strong> Mughni Hisyam Ardiansyah</p>
+                <p><strong>Kelas:</strong> NR-Informatika</p>
+                <p><strong>Dosen:</strong> Bapak Iin Sholihin, M.Kom</p>
+                <p><strong>Kampus:</strong> Ma'soem University</p>
+            </div>
+        </header>
+
+        <main>
+            <div class="section">
+                <h2>1. Pilihan Jenis Zakat</h2>
+                <div class="form-group">
+                    <input type="radio" id="zakat_mal" name="jenis_zakat" value="mal" checked>
+                    <label for="zakat_mal" class="check-label">Zakat Mal (Harta)</label>
+                    <br>
+                    <input type="radio" id="zakat_fitrah" name="jenis_zakat" value="fitrah">
+                    <label for="zakat_fitrah" class="check-label">Zakat Fitrah</label>
+                </div>
+            </div>
+
+            <div id="konten_zakat_fitrah" class="section hidden">
+                <h2>2. Perhitungan Zakat Fitrah</h2>
+                <p>Zakat Fitrah wajib dikeluarkan oleh setiap jiwa (Muslim) sebelum Shalat Idul Fitri. Besarannya adalah 2.5 kg atau 3.5 liter makanan pokok.</p>
+                <div class="form-group">
+                    <label for="harga_beras">Harga Beras per kg (Rp)</label>
+                    <div class="input-group">
+                        <span class="input-group-prepend">Rp</span>
+                        <input type="number" id="harga_beras" value="15000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="jumlah_jiwa">Jumlah Jiwa yang Dizakati</label>
+                    <input type="number" id="jumlah_jiwa" value="1" min="1">
+                </div>
+            </div>
+
+            <div id="konten_zakat_mal" class="section">
+                <h2>2. Perhitungan Zakat Mal (Harta)</h2>
+                <p>Zakat Mal wajib dikeluarkan jika harta telah mencapai **Nisab** (batas minimal) dan **Haul** (dimiliki selama 1 tahun Hijriah). Klik kotak untuk mengaktifkan perhitungan jenis harta.</p>
+
+                <div class="form-group">
+                    <label for="haul">Lama Kepemilikan (Haul)</label>
+                    <div class="input-group">
+                        <input type="number" id="haul" value="1" min="0">
+                        <span class="input-group-prepend" style="border-radius: 0 4px 4px 0; border-right: 1px solid #ccc; border-left: none;">Tahun</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kurs_emas">Asumsi Kurs Emas Murni (Rp / gram)</label>
+                    <div class="input-group">
+                        <span class="input-group-prepend">Rp</span>
+                        <input type="number" id="kurs_emas" value="2321000">
+                    </div>
+                    <small>Nisab zakat harta (uang, perniagaan, dll) setara dengan 85 gram emas.</small>
+                    <br>
+                    <small><strong>Nisab 1 tahun (Haul):</strong> <span id="display_nisab_haul">Rp 0</span></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="kurs_perak">Asumsi Kurs Perak Murni (Rp / gram)</label>
+                    <div class="input-group">
+                        <span class="input-group-prepend">Rp</span>
+                        <input type="number" id="kurs_perak" value="15000">
+                    </div>
+                    <small>Nisab zakat perak adalah 595 gram.</small>
+                </div>
+                
+                <hr>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_emas">
+                    <label for="cb_emas" class="check-label"><b>Zakat Emas</b> (Nisab: 85 gr, Tarif: 2.5%)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_emas">Jumlah Emas (gram)</label>
+                        <input type="number" id="jumlah_emas" value="0" min="0" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_perak">
+                    <label for="cb_perak" class="check-label"><b>Zakat Perak</b> (Nisab: 595 gr, Tarif: 2.5%)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_perak">Jumlah Perak (gram)</label>
+                        <input type="number" id="jumlah_perak" value="0" min="0" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_uang">
+                    <label for="cb_uang" class="check-label"><b>Zakat Uang, Tabungan, Surat Berharga</b> (Nisab: 85 gr Emas, Tarif: 2.5%)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_uang">Jumlah Total (Rp)</label>
+                        <input type="number" id="jumlah_uang" value="0" min="0" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_perniagaan">
+                    <label for="cb_perniagaan" class="check-label"><b>Zakat Perniagaan</b> (Nisab: 85 gr Emas, Tarif: 2.5%)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_perniagaan">Nilai Aset Usaha (setelah dikurangi utang) (Rp)</label>
+                        <input type="number" id="jumlah_perniagaan" value="0" min="0" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_penghasilan">
+                    <label for="cb_penghasilan" class="check-label"><b>Zakat Penghasilan (Profesi)</b> (Nisab: 85 gr Emas / tahun, Tarif: 2.5%)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_penghasilan">Total Penghasilan Bersih per Tahun (Rp)</label>
+                        <input type="number" id="jumlah_penghasilan" value="0" min="0" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_pertanian">
+                    <label for="cb_pertanian" class="check-label"><b>Zakat Pertanian</b> (Nisab: 653 kg gabah)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_pertanian">Hasil Panen (kg)</label>
+                        <input type="number" id="jumlah_pertanian" value="0" min="0" disabled>
+                        <label for="harga_gabah">Asumsi Harga Jual Panen (Rp / kg)</label>
+                        <input type="number" id="harga_gabah" value="8000" min="0" disabled>
+                        <label>Jenis Irigasi:</label>
+                        <input type="radio" id="irigasi_alami" name="irigasi" value="alami" checked disabled><label for="irigasi_alami" class="check-label">Alami (Tadah Hujan) - Tarif 10%</label>
+                        <br>
+                        <input type="radio" id="irigasi_buatan" name="irigasi" value="buatan" disabled><label for="irigasi_buatan" class="check-label">Buatan (Biaya) - Tarif 5%</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="checkbox" id="cb_rikaz">
+                    <label for="cb_rikaz" class="check-label"><b>Zakat Rikaz (Harta Temuan)</b> (Tanpa Nisab/Haul, Tarif: 20%)</label>
+                    <div class="form-group nested">
+                        <label for="jumlah_rikaz">Nilai Harta Temuan (Rp)</label>
+                        <input type="number" id="jumlah_rikaz" value="0" min="0" disabled>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="section">
+                <button id="hitung_zakat">Hitung Total Zakat</button>
+                <div id="hasil-kalkulasi" class="hidden"></div>
+            </div>
+
+            <div id="penjelasan_logika" class="section logika-zakat hidden">
+                <h2>Penjelasan Logika Matematika</h2>
+                <p>Hukum logika yang digunakan pada perhitungan zakat di atas (khususnya Zakat Mal seperti emas) adalah **Konjungsi (AND)**. Sebuah proposisi majemuk yang dihubungkan dengan kata 'dan' (dilambangkan dengan $P \land Q$).</p>
+                <ul>
+                    <li>Misal P = "Jumlah Emas $\ge$ 85 gram"</li>
+                    <li>Misal Q = "Lama Kepemilikan (Haul) $\ge$ 1 tahun"</li>
+                </ul>
+                <p>Seseorang **Wajib Zakat Emas** $(R)$ jika dan hanya jika $P \land Q$ bernilai **Benar (True)**. Artinya, kedua syarat (P dan Q) harus terpenuhi secara bersamaan. Jika salah satu saja tidak terpenuhi (bernilai False), maka $R$ akan bernilai False (Tidak Wajib Zakat).</p>
+                <hr>
+                <p id="argumen_logis"></p>
+            </div>
+
+            <div id="distribusi_section" class="section hidden">
+                <h2>3. Distribusi Zakat Kepada Mustahik</h2>
+                <p>Berdasarkan Q.S. At-Taubah [9]: 60, terdapat 8 golongan (Asnaf) yang berhak menerima zakat. Silakan pilih penerima zakat Anda. Sistem akan memvalidasi dan mendistribusikan sesuai kaidah fiqh.</p>
+                
+                <ul class="mustahik-list">
+                    <li>
+                        <input type="checkbox" id="mustahik_fakir" value="fakir">
+                        <label for="mustahik_fakir" class="check-label"><b>Fakir:</b> Orang yang tidak memiliki harta & tidak mampu bekerja.</label>
+                        <div class="dalil hidden">Dalil: "...sesungguhnya zakat itu hanyalah untuk orang-orang fakir..." (Q.S. 9:60). Mereka didahulukan dalam penyebutan karena kondisi kebutuhannya yang paling mendesak.</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_miskin" value="miskin">
+                        <label for="mustahik_miskin" class="check-label"><b>Miskin:</b> Orang yang memiliki harta/pekerjaan, namun tidak mencukupi.</label>
+                        <div class="dalil hidden">Dalil: "...orang-orang miskin..." (Q.S. 9:60).</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_amil" value="amil">
+                        <label for="mustahik_amil" class="check-label"><b>'Amil:</b> Panitia/lembaga yang mengelola pengumpulan dan pembagian zakat.</label>
+                        <div class="dalil hidden">Dalil: "...para pengurus zakat ('amilin)..." (Q.S. 9:60). Mereka berhak mendapat bagian sebagai kompensasi atas kerja mereka, umumnya $\frac{1}{8}$ dari total zakat yang terkumpul.</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_muallaf" value="muallaf">
+                        <label for="mustahik_muallaf" class="check-label"><b>Mu'allaf:</b> Orang yang baru masuk Islam atau yang diharapkan simpatinya.</label>
+                        <div class="dalil hidden">Dalil: "...yang dilunakkan hatinya (mu'allaf)..." (Q.S. 9:60).</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_riqab" value="riqab">
+                        <label for="mustahik_riqab" class="check-label"><b>Riqab:</b> Hamba sahaya/budak yang ingin memerdekakan diri.</label>
+                        <div class="dalil hidden">Dalil: "...untuk (memerdekakan) hamba sahaya (riqab)..." (Q.S. 9:60). (Dalam konteks modern, bisa dialokasikan untuk membebaskan Muslim dari perbudakan modern/penjajahan).</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_gharim" value="gharim">
+                        <label for="mustahik_gharim" class="check-label"><b>Gharim:</b> Orang yang terlilit utang untuk kebutuhan pokok.</label>
+                        <div class="dalil hidden">Dalil: "...untuk (membebaskan) orang yang berutang (gharimin)..." (Q.S. 9:60).</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_sabilillah" value="sabilillah">
+                        <label for="mustahik_sabilillah" class="check-label"><b>Fi Sabilillah:</b> Pejuang di jalan Allah (dakwah, jihad, fasilitas umum).</label>
+                        <div class="dalil hidden">Dalil: "...untuk jalan Allah (fi sabilillah)..." (Q.S. 9:60).</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="mustahik_ibnu_sabil" value="ibnu_sabil">
+                        <label for="mustahik_ibnu_sabil" class="check-label"><b>Ibnu Sabil:</b> Musafir yang kehabisan bekal dalam perjalanan (bukan maksiat).</label>
+                        <div class="dalil hidden">Dalil: "...dan untuk orang yang sedang dalam perjalanan (ibnu sabil)..." (Q.S. 9:60).</div>
+                        <span class="distribusi-hasil"></span>
+                    </li>
+                </ul>
+
+                <button id="hitung_distribusi" class="secondary">Validasi & Hitung Distribusi</button>
+                <div id="validation-message" class="hidden"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Variabel Global untuk Zakat
+        const NISAB_EMAS_GRAM = 85;
+        const NISAB_PERAK_GRAM = 595;
+        const NISAB_PERTANIAN_KG = 653;
+        let TOTAL_ZAKAT_RUPIAH = 0;
+
+        // Utility Function
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+        }
+
+        // Fungsi untuk meng-handle enable/disable input (Level 3)
+        function toggleInput(checkbox, inputs) {
+            const isChecked = checkbox.checked;
+            inputs.forEach(input => {
+                const el = document.getElementById(input.id);
+                el.disabled = !isChecked;
+                if (!isChecked) {
+                    if (input.type === 'number') el.value = 0;
+                    if (input.type === 'radio') el.checked = false;
+                }
+                // set default radio
+                if (input.id === 'irigasi_alami' && isChecked) el.checked = true;
+            });
+        }
+        
+        // Fungsi untuk meng-handle pilihan jenis zakat (Level 8)
+        function toggleZakatType() {
+            const jenis = document.querySelector('input[name="jenis_zakat"]:checked').value;
+            const kontenMal = document.getElementById('konten_zakat_mal');
+            const kontenFitrah = document.getElementById('konten_zakat_fitrah');
+            const distribusiSection = document.getElementById('distribusi_section');
+            
+            if (jenis === 'mal') {
+                kontenMal.classList.remove('hidden');
+                kontenFitrah.classList.add('hidden');
+            } else { // fitrah
+                kontenMal.classList.add('hidden');
+                kontenFitrah.classList.remove('hidden');
+            }
+            // Sembunyikan hasil kalkulasi dan distribusi jika pilihan berubah
+            document.getElementById('hasil-kalkulasi').classList.add('hidden');
+            document.getElementById('penjelasan_logika').classList.add('hidden');
+            distribusiSection.classList.add('hidden');
+            TOTAL_ZAKAT_RUPIAH = 0;
+        }
+
+        // Fungsi untuk mengupdate display Nisab (tergantung kurs emas)
+        function updateDisplayNisab() {
+            const kursEmas = parseFloat(document.getElementById('kurs_emas').value) || 0;
+            const nisabRupiah = NISAB_EMAS_GRAM * kursEmas;
+            document.getElementById('display_nisab_haul').textContent = formatRupiah(nisabRupiah);
+        }
+
+        // Fungsi utama kalkulasi Zakat (Level 2, 6, 7, 8)
+        function calculateTotalZakat() {
+            const jenis = document.querySelector('input[name="jenis_zakat"]:checked').value;
+            let totalZakat = 0;
+            let argumenLogis = ""; // Level 4
+            let wajibZakatEmas = false; // Level 4
+
+            // Sembunyikan bagian distribusi dan logika
+            document.getElementById('distribusi_section').classList.add('hidden');
+            document.getElementById('penjelasan_logika').classList.add('hidden');
+
+            if (jenis === 'fitrah') {
+                // --- Logika Zakat Fitrah ---
+                const hargaBeras = parseFloat(document.getElementById('harga_beras').value) || 0;
+                const jumlahJiwa = parseInt(document.getElementById('jumlah_jiwa').value) || 0;
+                totalZakat = jumlahJiwa * (2.5 * hargaBeras); // 2.5 kg * harga/kg
+                argumenLogis = `Anda mengeluarkan Zakat Fitrah untuk ${jumlahJiwa} jiwa sebesar 2.5 kg makanan pokok (beras) per jiwa, senilai ${formatRupiah(totalZakat)}.`;
+
+            } else {
+                // --- Logika Zakat Mal ---
+                const haul = parseFloat(document.getElementById('haul').value) || 0;
+                const kursEmas = parseFloat(document.getElementById('kurs_emas').value) || 0;
+                const kursPerak = parseFloat(document.getElementById('kurs_perak').value) || 0;
+                
+                const NISAB_RUPAH = NISAB_EMAS_GRAM * kursEmas;
+                const HAUL_MET = haul >= 1;
+
+                argumenLogis = "Berdasarkan perhitungan Zakat Mal Anda:\n";
+
+                // 1. Zakat Emas (Level 2 & 3)
+                if (document.getElementById('cb_emas').checked) {
+                    const jumlahEmas = parseFloat(document.getElementById('jumlah_emas').value) || 0;
+                    const wajibNisab = jumlahEmas >= NISAB_EMAS_GRAM;
+                    wajibZakatEmas = wajibNisab && HAUL_MET; // Logika Konjungsi (AND)
+                    
+                    if (wajibZakatEmas) {
+                        const zakatEmas = jumlahEmas * 0.025; // 2.5% dari gram
+                        const zakatEmasRp = zakatEmas * kursEmas;
+                        totalZakat += zakatEmasRp;
+                        argumenLogis += `\n- (WAJIB ZAKAT EMAS) Anda memiliki ${jumlahEmas} gram emas (>= ${NISAB_EMAS_GRAM} gr) dan telah disimpan ${haul} tahun (>= 1 thn). Zakat: 2.5% = ${zakatEmas.toFixed(2)} gr emas atau ${formatRupiah(zakatEmasRp)}.`;
+                    } else {
+                        argumenLogis += `\n- (TIDAK WAJIB ZAKAT EMAS) Syarat tidak terpenuhi. (Emas: ${jumlahEmas} gr, Haul: ${haul} thn).`;
+                    }
+                }
+
+                // 2. Zakat Perak (Level 7)
+                if (document.getElementById('cb_perak').checked) {
+                    const jumlahPerak = parseFloat(document.getElementById('jumlah_perak').value) || 0;
+                    if (jumlahPerak >= NISAB_PERAK_GRAM && HAUL_MET) {
+                        const zakatPerak = jumlahPerak * 0.025; // 2.5% dari gram
+                        const zakatPerakRp = zakatPerak * kursPerak;
+                        totalZakat += zakatPerakRp;
+                        argumenLogis += `\n- (WAJIB ZAKAT PERAK) Anda memiliki ${jumlahPerak} gr perak (>= ${NISAB_PERAK_GRAM} gr) & Haul ${haul} thn. Zakat: 2.5% = ${zakatPerak.toFixed(2)} gr perak atau ${formatRupiah(zakatPerakRp)}.`;
+                    } else {
+                        argumenLogis += `\n- (TIDAK WAJIB ZAKAT PERAK) Syarat Nisab (${NISAB_PERAK_GRAM} gr) & Haul (1 thn) tidak terpenuhi.`;
+                    }
+                }
+
+                // 3. Zakat Uang/Tabungan/Surat Berharga (Level 7)
+                if (document.getElementById('cb_uang').checked) {
+                    const jumlahUang = parseFloat(document.getElementById('jumlah_uang').value) || 0;
+                    if (jumlahUang >= NISAB_RUPAH && HAUL_MET) {
+                        const zakatUang = jumlahUang * 0.025;
+                        totalZakat += zakatUang;
+                        argumenLogis += `\n- (WAJIB ZAKAT UANG) Simpanan Anda ${formatRupiah(jumlahUang)} (>= Nisab ${formatRupiah(NISAB_RUPAH)}) & Haul ${haul} thn. Zakat: 2.5% = ${formatRupiah(zakatUang)}.`;
+                    } else {
+                        argumenLogis += `\n- (TIDAK WAJIB ZAKAT UANG) Syarat Nisab (${formatRupiah(NISAB_RUPAH)}) & Haul (1 thn) tidak terpenuhi.`;
+                    }
+                }
+
+                // 4. Zakat Perniagaan (Level 7)
+                if (document.getElementById('cb_perniagaan').checked) {
+                    const jumlahPerniagaan = parseFloat(document.getElementById('jumlah_perniagaan').value) || 0;
+                    if (jumlahPerniagaan >= NISAB_RUPAH && HAUL_MET) {
+                        const zakatPerniagaan = jumlahPerniagaan * 0.025;
+                        totalZakat += zakatPerniagaan;
+                        argumenLogis += `\n- (WAJIB ZAKAT PERNIAGAAN) Aset niaga Anda ${formatRupiah(jumlahPerniagaan)} (>= Nisab ${formatRupiah(NISAB_RUPAH)}) & Haul ${haul} thn. Zakat: 2.5% = ${formatRupiah(zakatPerniagaan)}.`;
+                    } else {
+                        argumenLogis += `\n- (TIDAK WAJIB ZAKAT PERNIAGAAN) Syarat Nisab (${formatRupiah(NISAB_RUPAH)}) & Haul (1 thn) tidak terpenuhi.`;
+                    }
+                }
+
+                // 5. Zakat Penghasilan (Level 6)
+                if (document.getElementById('cb_penghasilan').checked) {
+                    const jumlahPenghasilan = parseFloat(document.getElementById('jumlah_penghasilan').value) || 0;
+                    if (jumlahPenghasilan >= NISAB_RUPAH && HAUL_MET) { // Asumsi penghasilan ditotal 1 thn
+                        const zakatPenghasilan = jumlahPenghasilan * 0.025;
+                        totalZakat += zakatPenghasilan;
+                        argumenLogis += `\n- (WAJIB ZAKAT PENGHASILAN) Total penghasilan 1 thn ${formatRupiah(jumlahPenghasilan)} (>= Nisab ${formatRupiah(NISAB_RUPAH)}). Zakat: 2.5% = ${formatRupiah(zakatPenghasilan)}.`;
+                    } else {
+                        argumenLogis += `\n- (TIDAK WAJIB ZAKAT PENGHASILAN) Syarat Nisab 1 tahun (${formatRupiah(NISAB_RUPAH)}) tidak terpenuhi.`;
+                    }
+                }
+
+                // 6. Zakat Pertanian (Level 6 & 7)
+                if (document.getElementById('cb_pertanian').checked) {
+                    const jumlahPertanian = parseFloat(document.getElementById('jumlah_pertanian').value) || 0;
+                    const hargaGabah = parseFloat(document.getElementById('harga_gabah').value) || 0;
+                    const irigasi = document.querySelector('input[name="irigasi"]:checked').value;
+                    const tarif = (irigasi === 'alami') ? 0.10 : 0.05; // Logika berbeda (10% atau 5%)
+                    
+                    if (jumlahPertanian >= NISAB_PERTANIAN_KG) { // Haul tidak berlaku, dihitung per panen
+                        const zakatPertanian = (jumlahPertanian * hargaGabah) * tarif;
+                        totalZakat += zakatPertanian;
+                        argumenLogis += `\n- (WAJIB ZAKAT PERTANIAN) Hasil panen ${jumlahPertanian} kg (>= Nisab ${NISAB_PERTANIAN_KG} kg). Tarif: ${tarif*100}%. Zakat: ${formatRupiah(zakatPertanian)}.`;
+                    } else {
+                        argumenLogis += `\n- (TIDAK WAJIB ZAKAT PERTANIAN) Syarat Nisab (${NISAB_PERTANIAN_KG} kg) tidak terpenuhi.`;
+                    }
+                }
+
+                // 7. Zakat Rikaz (Level 7)
+                if (document.getElementById('cb_rikaz').checked) {
+                    const jumlahRikaz = parseFloat(document.getElementById('jumlah_rikaz').value) || 0;
+                    if (jumlahRikaz > 0) { // Tidak ada nisab & haul
+                        const zakatRikaz = jumlahRikaz * 0.20; // Logika berbeda (20%)
+                        totalZakat += zakatRikaz;
+                        argumenLogis += `\n- (WAJIB ZAKAT RIKAZ) Nilai temuan ${formatRupiah(jumlahRikaz)}. Tarif: 20% = ${formatRupiah(zakatRikaz)}.`;
+                    }
+                }
+
+                // Tampilkan Penjelasan Logika (Level 4)
+                document.getElementById('penjelasan_logika').classList.remove('hidden');
+            }
+
+            // Simpan total zakat ke variabel global
+            TOTAL_ZAKAT_RUPIAH = totalZakat;
+
+            // Tampilkan Hasil (Level 2)
+            const hasilKalkulasiEl = document.getElementById('hasil-kalkulasi');
+            if (totalZakat > 0) {
+                hasilKalkulasiEl.innerHTML = `TOTAL ZAKAT YANG WAJIB DIKELUARKAN: ${formatRupiah(totalZakat)}`;
+                document.getElementById('distribusi_section').classList.remove('hidden'); // Tampilkan distribusi
+            } else {
+                hasilKalkulasiEl.innerHTML = "Anda tidak diwajibkan mengeluarkan zakat berdasarkan input yang diberikan.";
+            }
+            hasilKalkulasiEl.classList.remove('hidden');
+
+            // Update Paragraf Argumen Logis (Level 4)
+            document.getElementById('argumen_logis').innerText = argumenLogis;
+        }
+
+        // Fungsi untuk menampilkan dalil (Level 10, Req 2)
+        function showDalil(checkbox) {
+            const dalilEl = checkbox.parentElement.querySelector('.dalil');
+            if (checkbox.checked) {
+                dalilEl.classList.remove('hidden');
+            } else {
+                dalilEl.classList.add('hidden');
+            }
+        }
+
+        // Fungsi untuk validasi dan distribusi mustahik (Level 10, Req 3 & 4)
+        function calculateDistribution() {
+            const totalZakat = TOTAL_ZAKAT_RUPIAH;
+            const validationMsgEl = document.getElementById('validation-message');
+            validationMsgEl.className = 'hidden';
+
+            const mustahikCheckboxes = document.querySelectorAll('.mustahik-list input[type="checkbox"]');
+            let selectedMustahik = [];
+            mustahikCheckboxes.forEach(cb => {
+                // Reset display hasil
+                cb.parentElement.querySelector('.distribusi-hasil').textContent = '';
+                if (cb.checked) {
+                    selectedMustahik.push(cb.value);
+                }
+            });
+
+            const count = selectedMustahik.length;
+            const isAmil = selectedMustahik.includes('amil');
+            const isFakir = selectedMustahik.includes('fakir');
+            const isSabilillah = selectedMustahik.includes('sabilillah');
+
+            // --- Validasi Logis Syariah (Level 10, Req 4) ---
+            if (count === 0) {
+                validationMsgEl.textContent = "Error: Distribusi tidak sah. Pilih minimal satu golongan mustahik.";
+                validationMsgEl.className = 'error';
+                return;
+            }
+
+            if (count === 1 && isAmil) {
+                validationMsgEl.textContent = "Error: Distribusi tidak sesuai syariah. Amil (pengurus) tidak boleh mengambil 100% zakat sendirian. Zakat harus sampai ke mustahik inti (Fakir, Miskin, dll).";
+                validationMsgEl.className = 'error';
+                return;
+            }
+
+            if (!isFakir && isSabilillah) {
+                // Ini adalah contoh validasi berdasarkan prioritas fiqh
+                validationMsgEl.textContent = "Peringatan Logis: Distribusi Anda tidak menyertakan golongan FAKIR, padahal mereka adalah prioritas utama (disebut pertama dalam ayat). Pastikan tidak ada Fakir di sekitar Anda sebelum mengalokasikan ke Fi Sabilillah.";
+                validationMsgEl.className = 'error'; // Tampilkan sebagai error agar user aware
+                // Kita bisa hentikan (return) atau biarkan lanjut dengan peringatan
+                // Untuk contoh ini, kita hentikan agar user memperbaiki.
+                return;
+            }
+
+            // --- Jika Lolos Validasi: Lakukan Perhitungan (Level 10, Req 3) ---
+            validationMsgEl.textContent = "Validasi Logis Berhasil. Distribusi dialokasikan sebagai berikut:";
+            validationMsgEl.className = 'success';
+            
+            let distribution = {};
+            let remainingZakat = totalZakat;
+            let nonAmilCount = count;
+
+            // Logika Fiqh: Amil mendapat porsi tetap (misal 1/8) sebagai "gaji"
+            if (isAmil) {
+                const amilPortion = totalZakat * (1/8); // 12.5%
+                distribution['amil'] = amilPortion;
+                remainingZakat -= amilPortion;
+                nonAmilCount -= 1;
+            }
+
+            // Sisa zakat (87.5% atau 100% jika Amil tdk dipilih) dibagi rata ke mustahik lain
+            if (nonAmilCount > 0) {
+                const portionPerMustahik = remainingZakat / nonAmilCount;
+                selectedMustahik.forEach(mustahik => {
+                    if (mustahik !== 'amil') {
+                        distribution[mustahik] = portionPerMustahik;
+                    }
+                });
+            }
+
+            // Tampilkan hasil distribusi
+            let totalPercentage = 0;
+            mustahikCheckboxes.forEach(cb => {
+                const mustahikName = cb.value;
+                const amount = distribution[mustahikName] || 0;
+                if (amount > 0) {
+                    const percentage = (amount / totalZakat) * 100;
+                    totalPercentage += percentage;
+                    const displayEl = cb.parentElement.querySelector('.distribusi-hasil');
+                    displayEl.textContent = `— ${formatRupiah(amount)} (${percentage.toFixed(1)}%)`;
+                }
+            });
+            
+            // Validasi akhir
+            validationMsgEl.textContent += ` (Total Distribusi: ${formatRupiah(totalZakat)} - ${totalPercentage.toFixed(0)}%)`;
+        }
+
+        // --- Inisialisasi Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Level 8: Pilihan Zakat
+            document.querySelectorAll('input[name="jenis_zakat"]').forEach(radio => {
+                radio.addEventListener('change', toggleZakatType);
+            });
+
+            // Level 3 & 7: Checkbox Harta
+            document.getElementById('cb_emas').addEventListener('change', (e) => toggleInput(e.target, [{id: 'jumlah_emas', type: 'number'}]));
+            document.getElementById('cb_perak').addEventListener('change', (e) => toggleInput(e.target, [{id: 'jumlah_perak', type: 'number'}]));
+            document.getElementById('cb_uang').addEventListener('change', (e) => toggleInput(e.target, [{id: 'jumlah_uang', type: 'number'}]));
+            document.getElementById('cb_perniagaan').addEventListener('change', (e) => toggleInput(e.target, [{id: 'jumlah_perniagaan', type: 'number'}]));
+            document.getElementById('cb_penghasilan').addEventListener('change', (e) => toggleInput(e.target, [{id: 'jumlah_penghasilan', type: 'number'}]));
+            document.getElementById('cb_rikaz').addEventListener('change', (e) => toggleInput(e.target, [{id: 'jumlah_rikaz', type: 'number'}]));
+            document.getElementById('cb_pertanian').addEventListener('change', (e) => toggleInput(e.target, [
+                {id: 'jumlah_pertanian', type: 'number'},
+                {id: 'harga_gabah', type: 'number'},
+                {id: 'irigasi_alami', type: 'radio'},
+                {id: 'irigasi_buatan', type: 'radio'}
+            ]));
+
+            // Kalkulator
+            document.getElementById('hitung_zakat').addEventListener('click', calculateTotalZakat);
+            document.getElementById('kurs_emas').addEventListener('input', updateDisplayNisab);
+
+            // Level 10: Mustahik
+            document.querySelectorAll('.mustahik-list input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', (e) => showDalil(e.target));
+            });
+            document.getElementById('hitung_distribusi').addEventListener('click', calculateDistribution);
+
+            // Panggil fungsi inisial
+            toggleZakatType();
+            updateDisplayNisab();
+        });
+    </script>
+</body>
+</html>
